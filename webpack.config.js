@@ -3,12 +3,7 @@ const webpack = require('webpack');
 
 var webpackConfig = {
     entry: {
-        app: [
-            'react-hot-loader/patch', 
-            'webpack-dev-server/client?http://localhost:3000', 
-            'webpack/hot/only-dev-server', 
-            './src/index.js'
-        ]
+        app: ['./src/index.js']
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -21,9 +16,6 @@ var webpackConfig = {
             include: path.join(__dirname, 'src'),
             use: [{
                 loader: 'babel-loader'
-                // options: {
-                //     presets: ['env']
-                // }
             }]
         },{
             test: /\.css$/,
@@ -50,7 +42,14 @@ if (process.env.NODE_ENV === 'production') {
     })
   ])
 } else {
-    webpackConfig.devtool = 'source-map',
+    webpackConfig.devtool = 'source-map';
+    for(var k in webpackConfig.entry) {
+        webpackConfig.entry[k] = [
+            'react-hot-loader/patch', 
+            'webpack-dev-server/client?http://localhost:3000', 
+            'webpack/hot/only-dev-server'
+        ].concat(webpackConfig.entry[k])
+    }
     webpackConfig.plugins = (webpackConfig.plugins || []).concat([
         new webpack.HotModuleReplacementPlugin()
     ])
